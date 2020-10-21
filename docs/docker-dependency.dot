@@ -1,0 +1,3 @@
+digraph D {
+    varbase -> {nginx, mariadb}
+}
