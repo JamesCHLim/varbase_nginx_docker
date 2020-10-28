@@ -23,7 +23,7 @@ drupal:
       - ./drupal/themes:/var/www/html/themes
       - drupal-site:/var/www/html/
 mariadb:
-      - site-database:/var/lib/mysql
+      - ./mariadb:/var/lib/mysql
 web-server: (nginx)
       - drupal-site:/var/www/html
       - ./nginx-conf:/etc/nginx/conf.d
@@ -42,9 +42,9 @@ yet)
 
 Then, you will need to preseed the drupal/sites/ directory. Due the the
 bind-mounted volumes, modules/ profiles/ sites/ and themes/ are empty by
-default, which will be populated on install. However, the sites volume must
-contain the necessary files for the site to properly install.  This is
-documented on the offical Docker Drupal image.
+default, which will be populated before install. This is documented on the
+offical Docker Drupal image, except for our case, we need to seed all volumes
+and not just the site directory.
 
 Hence, you must build the varbase image and extract the sites dir into the host
 machine.
@@ -53,7 +53,10 @@ Run
 
 ```{bash}
 docker build -t varbase-base ./varbase-conf
-docker run --rm varbase tar -cC /var/www/html/sites | tar -xC ./drupal/sites
+mkdir -p docker/{sites,profiles,themes,modules}
+for folder in "sites" "profiles" "themes" "modules"; do
+    docker run --rm varbase tar -cC "/var/www/html/$folder" | tar -xC "./drupal/$folder"
+done
 ```
 
 Now you should be able to run the stack,
@@ -101,7 +104,7 @@ TODO
 ## TODO
 
 - [x] Get base varbase site up on `docker-compose up`
-- [] Get base varbase site up with volumes mounted (Fix preseeding drupal/sites/\* issues)
+- [x] Get base varbase site up with volumes mounted (Fix preseeding drupal/sites/\* issues)
 - [] Test site importing
 - [] Test database importing
 - [] Identify proper upgrade procedure
