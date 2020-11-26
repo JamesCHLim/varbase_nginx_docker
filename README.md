@@ -14,23 +14,38 @@ host tcp/8080 -> nginx tcp/80 (frontend webaccess: localhost:8080)
 drupal tcp/9000 -> nginx tcp/9000 (fastcgi port)
 drupal tcp/3306 -> mariadb tcp/3306 (database access port)
 
+
+### FOR NEW SITE
+
 Volumes in use:
 
-drupal:
-      - ./drupal/modules:/var/www/html/modules
-      - ./drupal/profiles:/var/www/html/profiles
-      - ./drupal/sites:/var/www/html/sites
-      - ./drupal/themes:/var/www/html/themes
-      - drupal-site:/var/www/html/
-mariadb:
-      - ./mariadb:/var/lib/mysql
-web-server: (nginx)
-      - drupal-site:/var/www/html
-      - ./nginx-conf:/etc/nginx/conf.d
+    drupal:
+          - ./drupal/modules:/var/www/html/modules
+          - ./drupal/profiles:/var/www/html/profiles
+          - ./drupal/sites:/var/www/html/sites
+          - ./drupal/themes:/var/www/html/themes
+          - drupal-site:/var/www/html/
+    mariadb:
+          - ./mariadb:/var/lib/mysql
+    web-server: (nginx)
+          - drupal-site:/var/www/html
+          - ./nginx-conf:/etc/nginx/conf.d
+
+### FOR IMPORTED SITE
+
+Volumes in use:
+
+    drupal:
+          - ./drupal:/var/www/html/
+    mariadb:
+          - ./mariadb:/var/lib/mysql
+    web-server: (nginx)
+          - ./drupal:/var/www/html
+          - ./nginx-conf:/etc/nginx/conf.d
 
 ## How to use
 
-### For New site
+### For New site (Works)
 
 First, setup your environmental variables.
 
@@ -63,7 +78,7 @@ Now you should be able to run the stack,
 
 Run
 
-`docker-compose -f dev-compose.yml up`
+`docker-compose -f newsite-compose.yml up`
 
 To pull in the required Docker services (containers) and deploy them on your
 local machine.
@@ -92,8 +107,8 @@ Change the file config to connect the drupal database to ip `database` at port
 container as an ease of use feature in docker-compose)
 
 Now run
-`docker compose -f dev-compose.yml up` or `docker compose -f prod-compose.yml
-up` to pull up your dev or production environment.
+`docker compose -f import-compose.yml up` to pull up your dev or production
+environment.
 
 The site should be working.
 
@@ -105,6 +120,6 @@ TODO
 
 - [x] Get base varbase site up on `docker-compose up`
 - [x] Get base varbase site up with volumes mounted (Fix preseeding drupal/sites/\* issues)
-- [] Test site importing
-- [] Test database importing
-- [] Identify proper upgrade procedure
+- [] Test site importing (failing)
+- [] Test database importing (failing)
+- [] Identify proper upgrade procedure (failing)
