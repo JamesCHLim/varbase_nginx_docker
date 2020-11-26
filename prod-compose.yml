@@ -8,11 +8,7 @@ services:
       - external
       - internal
     volumes:
-      - ./drupal/modules:/var/www/html/modules
-      - ./drupal/profiles:/var/www/html/profiles
-      - ./drupal/sites:/var/www/html/sites
-      - ./drupal/themes:/var/www/html/themes
-      - drupal-site:/var/www/html/
+      - ./drupal:/var/www/html
     env_file:
       - db.env
     depends_on:
@@ -26,6 +22,7 @@ services:
       - internal
     volumes:
       - ./mariadb:/var/lib/mysql
+      - ./mariadb-startup-scripts:/docker-entrypoint-initdb.d
     env_file:
       - db.env
 
@@ -37,7 +34,7 @@ services:
     ports:
       - 8080:80
     volumes:
-      - drupal-site:/var/www/html
+      - ./drupal:/var/www/html
       - ./nginx-conf:/etc/nginx/conf.d
     depends_on:
       - drupal
